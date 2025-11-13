@@ -13,7 +13,8 @@ def main():
     """
 
     # Criamos o gravador de vídeo e escolhemos qual câmera usar.
-    # 0 = webcam interna | 1 = câmera USB externa.
+    # 0 = webcam interna
+    # 1 = câmera USB externa.
     recorder = CameraRecorder(camera_index=1)
 
     # Abre e configura a câmera (codec, resolução, FPS).

@@ -89,12 +89,12 @@ class CameraRecorder:
         # Pasta onde os vídeos serão salvos
         """ Aqui salvamos o vídeo na pasta 'videos'.
             __file__ é o caminho do arquivo atual. Usamos resolve() para obter o caminho absoluto, 
-            parent.parent para subir dois níveis (até a raiz do projeto) e então adicionamos "videos" usando / "videos".
-            
+            parents[1] para subir até a raiz do projeto e então adicionamos "videos" usando / "videos".
+
             Isso torna o projeto portátil e independente do local onde o script foi executado,
             garantindo que todos os vídeos fiquem sempre organizados dentro da pasta do projeto.
         """
-        videos_dir = Path(__file__).resolve().parent.parent / "videos"
+        videos_dir = Path(__file__).resolve().parents[2] / "videos"
         videos_dir.mkdir(exist_ok=True)
 
         # Nome do arquivo baseado na data/hora
@@ -105,6 +105,7 @@ class CameraRecorder:
         """
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         self.video_filename = videos_dir / f"mergulho_{timestamp}.avi"
+
 
     def start_recording(self):
         """
