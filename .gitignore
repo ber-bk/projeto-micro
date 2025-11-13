@@ -1,0 +1,22 @@
+# Impede que a pasta "videos" e todos os arquivos dentro dela sejam versionados
+videos/
+
+# Arquivos compilados do Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Ambiente virtual (caso seja criado)
+venv/
+env/
+.env/
+
+# Configurações do VSCode
+.vscode/
+
+# Logs gerais
+*.log
+
+# Arquivos temporários de sistema
+.DS_Store
+Thumbs.db
