@@ -1,38 +1,111 @@
-# projeto-micro
+Projeto de Telemetria – Capacete de Mergulho
 
-Roteiro Capacete
-Vamos fazer um capacete de mergulho, sem nos preocuparmos com vedar, inserir vários sensores de biometria, camera e fonia, estes irão conectado num esp32, todos conectados através de uma protoboard.
-O esp32, a camera e o fone irão se comunicar com o computador através de um cabo umbilical, onde o código neste computador receberá os dados dos sensores enviados pelo umbilical. Estes dados serão demonstrados numa dashboard visual, 
-com o feed da camera, o audio, e um display dos sensores de pressao, etc. Criaremos logs por mergulho. Lembrando que sensores como pressão e temperatura, como tem uma taxa baixa de mudança, podem ser enviados um update por minuto.
-Teremos a opção de exportar os dados(para um banco),também o video e a fonia
+Este projeto consiste no desenvolvimento de um capacete de mergulho com telemetria, contendo câmera, comunicação de voz e sensores biométricos/ambientais.
+A leitura dos dados será transmitida via cabo umbilical para um computador, onde uma dashboard exibirá informações em tempo real e também fará gravações para análise posterior.
 
-capacete:
-  Bola de plastico rigido e translucido, 30cm de raio (60cm diametro)
-  caixa plastica de 20x20x10 para colocar o arduino e sensores
+Objetivo Geral
 
-microcontroladores:
-  arduino
+Criar um sistema integrado que:
 
-MVP:
-  interno:
-    fone com microfone
+Recebe vídeo, áudio e dados de sensores em tempo real
 
-  externo:
-    sensor de pressao
-    câmera usb
+Exibe todas as informações em uma dashboard Python
 
-desejado:
-  batimento
-  temperatura do mergulhador
-  oximetria
+Grava vídeo, áudio e telemetria por mergulho
 
-dashboard:
-  feed e comunicação por voz em tempo real
-  Hud de dados de temperatura e pressao + desejados
-  criar logs por mergulho, coletando info de tempo em tempo
-  export do video em .avi
-  export dos dados podem ficar num banco de dados
+Permite exportar os dados (banco de dados + arquivos .avi)
 
+Estrutura do Capacete
 
+Parte física:
 
+Bola de plástico rígido e translúcido
 
+30 cm de raio (60 cm de diâmetro)
+
+Caixa plástica para a eletrônica: 20 × 20 × 10 cm
+
+Eletrônica interna/externa:
+
+Microcontrolador: ESP32
+
+Sensores conectados por protoboard
+
+Comunicação com o PC via cabo umbilical USB
+
+MVP (Mínimo Produto Viável)
+Interno ao capacete
+
+Fone com microfone
+
+Externo
+
+Câmera USB
+
+Sensor de pressão
+
+Sensores desejados (futuras versões)
+
+Sensor de batimentos
+
+Sensor de temperatura corporal
+
+Sensor de oximetria (SpO₂)
+
+Dashboard do Sistema (Python)
+
+A interface exibirá e registrará:
+
+Feed da câmera USB
+
+Captura ao vivo usando OpenCV
+
+Gravação automática em formato .avi
+
+Comunicação de áudio
+
+Captura do microfone interno
+
+Transmissão para o computador via cabo umbilical
+
+HUD de telemetria
+
+Pressão
+
+Temperatura
+
+Demais sensores planejados
+
+Observação: sensores de baixa variação (como pressão e temperatura) poderão enviar apenas uma atualização por minuto.
+
+Sistema de logs por mergulho
+
+Arquivo de vídeo
+
+Áudio (se implementado)
+
+Dados dos sensores
+
+Possibilidade de salvar tudo em um banco de dados
+
+Estrutura atual do repositório
+projeto-micro/
+│
+├── src/
+│   └── video_capture.py       # Captura e gravação da câmera USB
+│
+├── videos/                    # Gravações .avi (opcional versionamento)
+├── requirements.txt           # Dependências do Python
+└── README.md
+
+Próximas etapas
+
+Implementar comunicação serial com o ESP32
+
+Desenvolver módulo dos sensores (pressão, temperatura, batimento, SpO₂)
+
+Implementar dashboard em Python (Tkinter, PyQt ou interface web)
+
+Registrar e exportar dados para banco de dados
+
+Integrar vídeo, áudio e sensores em uma única aplicação
