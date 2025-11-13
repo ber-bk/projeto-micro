@@ -116,17 +116,19 @@ def main():
     print(f"Gravando vídeo em: {video_filename}")
     print("Pressione 'q' na janela de vídeo para parar a gravação.")
 
-    # Loop principal: ler da câmera, mostrar e gravar
-    """ Este loop roda até o usuário apertar 'q'.
-        Em cada iteração:
-        - cap.read() captura um frame da câmera.
-        - out.write(frame) adiciona esse frame ao arquivo .avi.
-        - cv2.imshow exibe o frame na tela para visualização em tempo real.
-        - cv2.waitKey(1) verifica se alguma tecla foi pressionada.
-    """
     while True:
+        """Este loop roda até o usuário apertar 'q'.
+            Em cada iteração:
+            - cap.read() captura um frame da câmera.
+            - out.write(frame) adiciona esse frame ao arquivo .avi.
+            - cv2.imshow exibe o frame na tela para visualização em tempo real.
+            - cv2.waitKey(1) verifica se alguma tecla foi pressionada.
+        """
+        # Lê um frame da câmera
+        # ret é True se a leitura foi bem-sucedida, frame é o frame capturado, que é falso se não houver mais frames
         ret, frame = cap.read()
 
+        # Verifica se a leitura foi bem-sucedida
         if not ret:
             print("Falha ao ler frame da câmera. Encerrando.")
             break
@@ -139,10 +141,9 @@ def main():
 
         # Espera 1 ms por tecla. Se for 'q', sai.
         """ waitKey(1) retorna o código da tecla pressionada.
-            Usamos & 0xFF, que é uma máscara bit a bit, para garantir compatibilidade entre sistemas.
             Se a tecla for 'q', interrompemos o loop.
         """
-        if cv2.waitKey(1) & 0xFF == ord("q"):
+        if cv2.waitKey(1) == ord("q"):
             break
 
     # Libera recursos
@@ -156,7 +157,6 @@ def main():
     cv2.destroyAllWindows()
 
     print("Gravação finalizada.")
-
 
 if __name__ == "__main__":
     main()
