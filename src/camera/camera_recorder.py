@@ -3,6 +3,8 @@ from datetime import datetime
 from pathlib import Path
 
 
+
+
 class CameraRecorder:
     """
     Classe responsável por capturar e gravar vídeo da câmera USB.
@@ -15,9 +17,6 @@ class CameraRecorder:
         """
         Inicializa variáveis internas e define o índice da câmera.
 
-        camera_index:
-        0 para webcam interna do laptop
-        1 para câmera USB externa
         """
         self.camera_index = camera_index
         self.cap = None
@@ -27,6 +26,10 @@ class CameraRecorder:
         self.frame_width = None
         self.frame_height = None
 
+        self.segment_duration_sec = 5*60     # 5 minutos
+        self.segment_start_time = None
+        self.segment_index = 1
+
     def open_camera(self):
         """
         Abre a câmera e aplica configurações iniciais como codec MJPG,
@@ -34,10 +37,6 @@ class CameraRecorder:
 
         (Docstrings e comentários abaixo são do código original)
         """
-
-        # Abrir a câmera USB
-        # 0 para webcam interna do Laptop
-        # 1 para câmera USB externa
         self.cap = cv2.VideoCapture(self.camera_index)
 
         # Forçar MJPG para melhor compatibilidade com várias câmeras
@@ -106,6 +105,30 @@ class CameraRecorder:
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         self.video_filename = videos_dir / f"mergulho_{timestamp}.avi"
 
+    def start_new_segment(self):
+        """
+        Cria um novo arquivo de vídeo para iniciar um novo segmento.
+        Mantém FPS, resolução e codec, mas troca o nome do arquivo.
+        """
+
+        videos_dir = Path(__file__).resolve().parents[2] / "videos"
+
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        base_name = f"mergulho_{timestamp}_parte{self.segment_index}.avi"
+        self.video_filename = videos_dir / base_name
+
+        fourcc = cv2.VideoWriter_fourcc(*"MJPG")
+
+        self.out = cv2.VideoWriter(
+            str(self.video_filename),
+            fourcc,
+            self.fps,
+            (self.frame_width, self.frame_height)
+        )
+
+        self.segment_start_time = datetime.now()
+        print(f"[SEGMENTO] Gravando arquivo: {self.video_filename}")
+        self.segment_index += 1
 
     def start_recording(self):
         """
@@ -125,25 +148,9 @@ class CameraRecorder:
 
              O arquivo .avi gerado é apenas um *container*, e o MJPG é o codec interno usado para comprimir os frames.
         """
-        fourcc = cv2.VideoWriter_fourcc(*"MJPG")
-        self.out = cv2.VideoWriter(
-            str(self.video_filename),
-            fourcc,
-            self.fps,
-            (self.frame_width, self.frame_height)
-        )
 
-        # Verifica se o arquivo foi aberto corretamente
-        """ out.isOpened() retorna False quando o OpenCV não consegue criar o arquivo .avi,
-            frequentemente por falta de permissões de escrita, caminhos inválidos ou codecs não suportados.
-        """
-        if not self.out.isOpened():
-            print("Erro: não consegui criar o arquivo de vídeo.")
-            return False
-
-        print(f"Gravando vídeo em: {self.video_filename}")
-        print("Pressione 'q' na janela de vídeo para parar a gravação.")
-
+        # Apenas inicializa a primeira vez (segmento 1)
+        self.start_new_segment()
         return True
 
     def record_loop(self):
@@ -161,7 +168,6 @@ class CameraRecorder:
                 - cv2.waitKey(1) verifica se alguma tecla foi pressionada.
             """
             # Lê um frame da câmera
-            # ret é True se a leitura foi bem-sucedida, frame é o frame capturado, que é falso se não houver mais frames
             ret, frame = self.cap.read()
 
             # Verifica se a leitura foi bem-sucedida
@@ -169,19 +175,25 @@ class CameraRecorder:
                 print("Falha ao ler frame da câmera. Encerrando.")
                 break
 
+            # ---- SEGMENTAÇÃO: checa se já passou 5 minutos ----
+            elapsed = (datetime.now() - self.segment_start_time).total_seconds()
+            if elapsed >= self.segment_duration_sec:
+                print("[SEGMENTO] Criando novo arquivo de vídeo...")
+                self.out.release()
+                self.start_new_segment()
+
             # Escreve o frame no arquivo de saída
             self.out.write(frame)
 
             # Mostra o frame na tela
             cv2.imshow("Capacete - Camera (press 'q' para sair)", frame)
 
-            # Espera 1 ms por tecla. Se for 'q', sai.
-            """ waitKey(1) retorna o código da tecla pressionada.
-                Se a tecla for 'q', interrompemos o loop.
-            """
-            if cv2.waitKey(1) == ord("q"):
+            # Espera 1 ms por tecla. Se for 'q' ou 'Q', sai.
+            key = cv2.waitKey(1)
+            if key != -1 and chr(key).lower() == "q":
                 break
 
+        # Fecha recursos — agora fora do loop
         self.close()
 
     def close(self):

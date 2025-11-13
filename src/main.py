@@ -1,4 +1,4 @@
-from camera_recorder import CameraRecorder
+from camera.camera_recorder import CameraRecorder
 
 def main():
     """
