@@ -1,1 +1,5 @@
 opencv-python
+sounddevice
+numpy
+pytest
+soundfile (usa libsndfile — necessário instalar no Windows)

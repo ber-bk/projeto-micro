@@ -1,111 +1,202 @@
-Projeto de Telemetria – Capacete de Mergulho
+# Projeto de Telemetria – Capacete de Mergulho
+PUC — Microcontroladores / Sistemas Embarcados
 
-Este projeto consiste no desenvolvimento de um capacete de mergulho com telemetria, contendo câmera, comunicação de voz e sensores biométricos/ambientais.
-A leitura dos dados será transmitida via cabo umbilical para um computador, onde uma dashboard exibirá informações em tempo real e também fará gravações para análise posterior.
+Este projeto consiste no desenvolvimento de um capacete de mergulho com telemetria integrada, contendo:
 
-Objetivo Geral
+- Vídeo ao vivo  
+- Áudio bidirecional  
+- Sensores biométricos e ambientais  
+- Dashboard em Python  
+- Registro completo do mergulho (vídeo, áudio e dados)
 
-Criar um sistema integrado que:
+Os dados são enviados via cabo umbilical USB para um computador, onde são exibidos e gravados.
 
-Recebe vídeo, áudio e dados de sensores em tempo real
+# Objetivo Geral
 
-Exibe todas as informações em uma dashboard Python
+Criar um sistema capaz de:
 
-Grava vídeo, áudio e telemetria por mergulho
+- Receber vídeo, áudio e sensores em tempo real  
+- Exibir tudo em uma dashboard Python  
+- Gravar automaticamente vídeo (.avi), áudio (.wav) e dados dos sensores  
+- Agrupar tudo em um banco de dados  
+- Permitir expansão de sensores sem refazer a arquitetura
 
-Permite exportar os dados (banco de dados + arquivos .avi)
+# Arquitetura do Sistema
 
-Estrutura do Capacete
+## Estrutura Física do Capacete
 
-Parte física:
+- Capacete: bolha rígida translúcida  
+- Dimensões: 30 cm de raio (60 cm de diâmetro)  
+- Caixa eletrônica: 20 × 20 × 10 cm
 
-Bola de plástico rígido e translúcido
+### Microcontrolador
+- ESP32  
+- Comunicação via cabo umbilical USB (serial)
 
-30 cm de raio (60 cm de diâmetro)
+### Sensores
 
-Caixa plástica para a eletrônica: 20 × 20 × 10 cm
+| Sensor | Status | Observação |
+|--------|--------|-------------|
+| Pressão | Implementado (MVP) | Atualização lenta |
+| Temperatura | Implementado (MVP) | Baixa variação |
+| Batimentos cardíacos | Futuro | |
+| Oximetria SpO₂ | Futuro | |
 
-Eletrônica interna/externa:
+# Módulo de Vídeo
 
-Microcontrolador: ESP32
+Localização: `src/camera/camera_recorder.py`
 
-Sensores conectados por protoboard
+Funcionalidades:
 
-Comunicação com o PC via cabo umbilical USB
+- Captura via OpenCV  
+- Gravação segmentada automática  
+- Geração de arquivos `.avi`  
+- Testes automatizados usando mocks (sem webcam real)
 
-MVP (Mínimo Produto Viável)
-Interno ao capacete
+# Módulo de Áudio
 
-Fone com microfone
+Localização: `src/audio/AudioRecorder.py`
 
-Externo
+Funcionalidades:
 
-Câmera USB
+- Captação com sounddevice  
+- Escrita com soundfile  
+- Segmentação de arquivos `.wav`  
+- Uso de queue interna para evitar perdas  
+- Testes automatizados usando mocks (sem microfone real)
 
-Sensor de pressão
+# Módulo TelemetryRecorder
 
-Sensores desejados (futuras versões)
+Localização: `src/telemetry/telemetry_recorder.py`
 
-Sensor de batimentos
+O TelemetryRecorder coordena:
 
-Sensor de temperatura corporal
+- Vídeo  
+- Áudio  
+- Sensores (expansível)
 
-Sensor de oximetria (SpO₂)
+Exemplo simplificado:
 
-Dashboard do Sistema (Python)
+```
+class TelemetryRecorder:
+    def __init__(self):
+        self.camera = CameraRecorder()
+        self.audio = AudioRecorder()
+        self.sensors = []
 
-A interface exibirá e registrará:
+    def start_all(self):
+        ...
+    def stop_all(self):
+        ...
+```
 
-Feed da câmera USB
+Sensores adicionais podem ser incluídos futuramente:
 
-Captura ao vivo usando OpenCV
+```
+self.sensors.append(PressureSensorRecorder())
+```
 
-Gravação automática em formato .avi
+# Testes Automatizados
 
-Comunicação de áudio
+Localização: `src/tests/test_system.py`
 
-Captura do microfone interno
+Testes atuais:
 
-Transmissão para o computador via cabo umbilical
+- Segmentação de vídeo  
+- Falha ao abrir câmera  
+- Múltiplos segmentos  
+- Testes de performance  
+- Segmentação de áudio  
+- Fila vazia de áudio  
+- Início e parada do sistema completo  
+- Integração básica  
+- Testes sem hardware real (Mock)
 
-HUD de telemetria
+Rodar testes:
 
-Pressão
+```
+pytest -v
+```
 
-Temperatura
+Resultado atual: 100% dos testes passam.
 
-Demais sensores planejados
+# Estrutura Atual do Repositório
 
-Observação: sensores de baixa variação (como pressão e temperatura) poderão enviar apenas uma atualização por minuto.
-
-Sistema de logs por mergulho
-
-Arquivo de vídeo
-
-Áudio (se implementado)
-
-Dados dos sensores
-
-Possibilidade de salvar tudo em um banco de dados
-
-Estrutura atual do repositório
-projeto-micro/
+```
+ProjetoMicroTelemetriaCapacete/
 │
 ├── src/
-│   └── video_capture.py       # Captura e gravação da câmera USB
+│   ├── camera/
+│   │   └── camera_recorder.py
+│   ├── audio/
+│   │   └── AudioRecorder.py
+│   ├── telemetry/
+│   │   └── telemetry_recorder.py
+│   └── tests/
+│       └── test_system.py
 │
-├── videos/                    # Gravações .avi (opcional versionamento)
-├── requirements.txt           # Dependências do Python
+├── videos/
+├── audio/
+├── requirements.txt
 └── README.md
+```
 
-Próximas etapas
+# Dependências
 
-Implementar comunicação serial com o ESP32
+Principais bibliotecas:
 
-Desenvolver módulo dos sensores (pressão, temperatura, batimento, SpO₂)
+- OpenCV  
+- sounddevice  
+- soundfile  
+- numpy  
+- pytest e pytest-mock  
 
-Implementar dashboard em Python (Tkinter, PyQt ou interface web)
+Instalação:
 
-Registrar e exportar dados para banco de dados
+```
+pip install -r requirements.txt
+```
 
-Integrar vídeo, áudio e sensores em uma única aplicação
+No Windows, também é necessário:
+
+```
+choco install libsndfile -y
+```
+
+# Dashboard (Próximas Etapas)
+
+A dashboard exibirá:
+
+- Vídeo em tempo real  
+- Áudio  
+- Telemetria (pressão, temperatura, etc.)  
+- Gráficos em tempo real  
+- Estado geral do mergulho  
+- Exportação para banco de dados
+
+Frameworks sugeridos:
+
+- Tkinter  
+- PyQt  
+- Dash  
+- DearPyGui  
+
+# Roadmap
+
+1. Comunicação serial com ESP32  
+2. Implementação dos módulos de sensores  
+3. Dashboard Python completa  
+4. Banco de dados SQLite  
+5. Integração total (vídeo + áudio + sensores)
+
+# Conclusão
+
+O projeto já possui:
+
+- Captura de vídeo  
+- Captura de áudio  
+- TelemetryRecorder funcional  
+- 10 testes automatizados  
+- Arquitetura modular e robusta  
+
+Pronto para evolução em direção à integração completa e dashboard final.
