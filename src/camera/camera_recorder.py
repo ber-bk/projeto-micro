@@ -82,28 +82,25 @@ class CameraRecorder:
 
     def prepare_output_file(self):
         """
-        Gera o nome do arquivo .avi baseado em timestamp e cria a pasta 'videos'.
+        Gera o nome do arquivo .avi baseado em timestamp e cria a pasta
+        'gravacoes/video' na raiz do projeto.
         """
 
-        # Pasta onde os vídeos serão salvos
-        """ Aqui salvamos o vídeo na pasta 'videos'.
-            __file__ é o caminho do arquivo atual. Usamos resolve() para obter o caminho absoluto, 
-            parents[1] para subir até a raiz do projeto e então adicionamos "videos" usando / "videos".
+        from pathlib import Path
+        from datetime import datetime
 
-            Isso torna o projeto portátil e independente do local onde o script foi executado,
-            garantindo que todos os vídeos fiquem sempre organizados dentro da pasta do projeto.
-        """
-        videos_dir = Path(__file__).resolve().parents[2] / "videos"
-        videos_dir.mkdir(exist_ok=True)
+        # Caminho: <projeto>/gravacoes/video
+        videos_dir = (
+            Path(__file__).resolve().parents[2]
+            / "gravacoes"
+            / "video"
+        )
+        videos_dir.mkdir(parents=True, exist_ok=True)
 
-        # Nome do arquivo baseado na data/hora
-        """ Criamos nomes únicos para os arquivos usando timestamp.
-            datetime.now() obtém a data e hora atual.
-            strftime() formata essa data em texto, no formato: AAAA-MM-DD_HH-MM-SS.
-            Isso evita sobrescrever arquivos e organiza bem os registros de mergulho.
-        """
+        # Nome baseado no timestamp
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         self.video_filename = videos_dir / f"mergulho_{timestamp}.avi"
+
 
     def start_new_segment(self):
         """
@@ -111,7 +108,12 @@ class CameraRecorder:
         Mantém FPS, resolução e codec, mas troca o nome do arquivo.
         """
 
-        videos_dir = Path(__file__).resolve().parents[2] / "videos"
+        # <<< CORRIGIDO: antes estava apontando para /videos >>>
+        videos_dir = (
+            Path(__file__).resolve().parents[2]
+            / "gravacoes"
+            / "video"
+        )
 
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         base_name = f"mergulho_{timestamp}_parte{self.segment_index}.avi"
@@ -135,20 +137,6 @@ class CameraRecorder:
         Inicializa o objeto VideoWriter responsável por salvar frames no arquivo .avi.
         """
 
-        # Configura o writer com MJPG
-        """" Configuramos o VideoWriter para salvar o vídeo com o codec MJPG, que é amplamente suportado e oferece boa qualidade.
-             O arquivo será salvo com o nome gerado anteriormente, na resolução e FPS detectados/forçados.
-             out é o objeto que escreverá os frames no arquivo de vídeo. Ele possui o método write() que será usado para salvar cada frame capturado.
-
-             Parâmetros:
-             - str(video_filename): caminho completo do arquivo de saída
-             - fourcc: codec de compressão (MJPG)
-             - fps: taxa de frames por segundo do vídeo
-             - (frame_width, frame_height): resolução do vídeo
-
-             O arquivo .avi gerado é apenas um *container*, e o MJPG é o codec interno usado para comprimir os frames.
-        """
-
         # Apenas inicializa a primeira vez (segmento 1)
         self.start_new_segment()
         return True
@@ -160,51 +148,30 @@ class CameraRecorder:
         """
 
         while True:
-            """Este loop roda até o usuário apertar 'q'.
-                Em cada iteração:
-                - cap.read() captura um frame da câmera.
-                - out.write(frame) adiciona esse frame ao arquivo .avi.
-                - cv2.imshow exibe o frame na tela para visualização em tempo real.
-                - cv2.waitKey(1) verifica se alguma tecla foi pressionada.
-            """
-            # Lê um frame da câmera
             ret, frame = self.cap.read()
 
-            # Verifica se a leitura foi bem-sucedida
             if not ret:
                 print("Falha ao ler frame da câmera. Encerrando.")
                 break
 
-            # ---- SEGMENTAÇÃO: checa se já passou 5 minutos ----
             elapsed = (datetime.now() - self.segment_start_time).total_seconds()
             if elapsed >= self.segment_duration_sec:
                 print("[SEGMENTO] Criando novo arquivo de vídeo...")
                 self.out.release()
                 self.start_new_segment()
 
-            # Escreve o frame no arquivo de saída
             self.out.write(frame)
 
-            # Mostra o frame na tela
             cv2.imshow("Capacete - Camera (press 'q' para sair)", frame)
-
-            # Espera 1 ms por tecla. Se for 'q' ou 'Q', sai.
             key = cv2.waitKey(1)
             if key != -1 and chr(key).lower() == "q":
                 break
 
-        # Fecha recursos — agora fora do loop
         self.close()
 
     def close(self):
         """
         Libera recursos: câmera, arquivo e janelas.
-        """
-
-        """ É fundamental liberar recursos ao final.
-            - cap.release(): desativa a câmera.
-            - out.release(): finaliza e salva o arquivo .avi.
-            - cv2.destroyAllWindows(): fecha todas as janelas abertas pelo OpenCV.
         """
         if self.cap:
             self.cap.release()

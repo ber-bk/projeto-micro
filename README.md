@@ -1,5 +1,5 @@
 # Projeto de Telemetria – Capacete de Mergulho
-PUC — Microcontroladores / Sistemas Embarcados
+PUC-Microcontroladores / Sistemas Embarcados
 
 Este projeto consiste no desenvolvimento de um capacete de mergulho com telemetria integrada, contendo:
 

@@ -45,17 +45,24 @@ class AudioRecorder:
     def prepare_output_file(self):
         """
         Cria a pasta de gravações de áudio e gera o nome do arquivo WAV.
+        Agora salva em <projeto>/gravacoes/audio.
         """
 
-        """ Segue mesma filosofia do vídeo:
-            - pasta fixa dentro do projeto (audio/gravacoes)
-            - nomes baseados em timestamp
-        """
-        base_dir = Path(__file__).resolve().parents[1] / "audio" / "gravacoes"
+        from pathlib import Path
+        from datetime import datetime
+
+        # Caminho: <projeto>/gravacoes/audio
+        base_dir = (
+            Path(__file__).resolve().parents[2]
+            / "gravacoes"
+            / "audio"
+        )
         base_dir.mkdir(parents=True, exist_ok=True)
 
+        # Nome único baseado em timestamp
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         self.audio_filename = base_dir / f"audio_{timestamp}.wav"
+
 
     def start_new_segment(self):
         """
