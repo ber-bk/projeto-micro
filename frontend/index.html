@@ -16,6 +16,15 @@
 </head>
 
 <body ng-controller="ProjetoMicroController">
+
+  <div class="NavigationBar" style="">
+    <center class="Add10pxMargin">
+      <button class="btn btn-primary" ng-click="AlterarViewCriarMissao()"><b>Criar Missão</b></button>
+      <button class="btn btn-primary" ng-click="AlterarViewSelecionarMissao()"><b>Selecionar Missão</b></button>
+      <button class="btn btn-primary" ng-click="AlterarViewExibirMissao()"><b>Exibir Missão</b></button>
+    </center>
+  </div>
+
   <div class="container">
     <br />
     <div class="card">
@@ -82,7 +91,6 @@
               INFOGRAFICO DOS SENSORES
             </div>
             <!-- Fim do Primeiro Infográfico -->
-
             <!-- Segundo Infográfico -->
             <div class="card card-body">
               INFORMACOES DA MISSAO
@@ -103,7 +111,6 @@
 
           </div>
           <!-- Fim do Primeiro Card -->
-
           <!-- Segundo Card -->
           <br />
           <div class="card-group col-12">
@@ -127,9 +134,8 @@
         </div>
       </div>
 
-
     </div>
-  <br />  
-</div>
+    <br />
+  </div>
 </body>
 </html>

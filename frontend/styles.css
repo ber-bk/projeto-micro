@@ -1,3 +1,12 @@
-﻿body
+﻿.NavigationBar
 {
+  background: lightgrey;
+  border-style: solid;
+  border-width: thick;
+  border-color: lightblue;
+}
+
+.Add10pxMargin
+{
+  margin: 10px;
 }
