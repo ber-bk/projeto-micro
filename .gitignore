@@ -20,3 +20,7 @@ env/
 # Arquivos temporários de sistema
 .DS_Store
 Thumbs.db
+/Frontend/.vs/Projeto Microcontroladores/FileContentIndex/b74e57ca-ea5a-4a11-8cdd-2e3a29da251b.vsidx
+/.vs/projeto-micro/v17
+/Frontend/.vs/Projeto Microcontroladores/v17/.suo
+/Frontend/Projeto Microcontroladores.sln
