@@ -17,6 +17,7 @@
 
 <body ng-controller="ProjetoMicroController">
 
+  <!-- Início da Barra de Navegação -->
   <div class="NavigationBar" style="">
     <center class="Add10pxMargin">
       <button class="btn btn-primary" ng-click="AlterarViewCriarMissao()"><b>Criar Missão</b></button>
@@ -24,11 +25,13 @@
       <button class="btn btn-primary" ng-click="AlterarViewExibirMissao()"><b>Exibir Missão</b></button>
     </center>
   </div>
+  <!-- Fim da Barra de Navegação -->
 
   <div class="container">
     <br />
     <div class="card">
 
+      <!-- Tela de Criação de Missão -->
       <div id="CriacaoMissao" ng-if="CriarMissao">
         <div class="card-header card-title text-primary text-center"><b>Criação da Missão</b></div>
         <div class="card-body">
@@ -49,7 +52,9 @@
 
         </div>
       </div>
+      <!-- Fim da Tela de Criação de Missão -->
 
+      <!-- Tela de Seleção de Missão -->
       <div id="SelecaoMissao" ng-if="SelecionarMissao">
         <div class="card-header card-title text-primary text-center"><b>Seleção da Missão</b></div>
         <div class="card-body">
@@ -65,7 +70,9 @@
 
         </div>
       </div>
+      <!-- Fim da Tela de Seleção de Missão -->
 
+      <!-- Tela de Exibição de Missão -->
       <div id="ExibicaoMissao" ng-if="ExibirMissao">
         <div class="card-header card-title text-primary text-center"><b>Exibição da Missão</b></div>
         <div class="card-body">
@@ -91,6 +98,7 @@
               INFOGRAFICO DOS SENSORES
             </div>
             <!-- Fim do Primeiro Infográfico -->
+
             <!-- Segundo Infográfico -->
             <div class="card card-body">
               INFORMACOES DA MISSAO
@@ -111,6 +119,7 @@
 
           </div>
           <!-- Fim do Primeiro Card -->
+
           <!-- Segundo Card -->
           <br />
           <div class="card-group col-12">
@@ -133,9 +142,10 @@
 
         </div>
       </div>
+      <!-- Fim da Tela de Exibição de Missão -->
 
-    </div>
-    <br />
-  </div>
+    </div><!-- Card -->
+    <br /><!-- Padding Inferior -->
+  </div><!-- Container -->
 </body>
 </html>
