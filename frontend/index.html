@@ -13,6 +13,7 @@
   <script src="angular.js"></script>
   <script src="bootstrap.js"></script>
   <script src="app.js"></script>
+  <script src="hls.js"></script>
 </head>
 
 <body ng-controller="ProjetoMicroController">
@@ -125,15 +126,14 @@
           <div class="card-group col-12">
             <div class="card card-body">
 
-              VIDEO
-              <br />
-              VIDEO
-              <br />
-              VIDEO
-              <br />
-              VIDEO
-              <br />
-              VIDEO
+              <video id="video" controls width="800"></video>
+
+              <script>
+                const video=document.getElementById('video');
+                const hls=new Hls();
+                hls.loadSource('http://localhost:8000/playlist.m3u8');
+                hls.attachMedia(video);
+              </script>
 
             </div>
           </div>
