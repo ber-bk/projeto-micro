@@ -16,7 +16,6 @@ class AudioRecorder:
     def __init__(self, samplerate=44100, channels=1):
         """
         Inicializa variáveis internas do gravador de áudio.
-
         """
         self.samplerate = samplerate
         self.channels = channels
@@ -29,6 +28,7 @@ class AudioRecorder:
         self.segment_duration_sec = 5 * 60   # 5 minutos por segmento
         self.segment_start_time = None
         self.segment_index = 1
+        self.running = False                 # Flag para controlar o loop de gravação
 
     def _audio_callback(self, indata, frames, time, status):
         """
@@ -63,23 +63,19 @@ class AudioRecorder:
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         self.audio_filename = base_dir / f"audio_{timestamp}.wav"
 
-
     def start_new_segment(self):
-        """
-        Inicia um novo arquivo WAV de segmento.
-        O stream de áudio continua aberto — apenas trocamos os arquivos.
-        """
 
-        base_dir = Path(__file__).resolve().parents[1] / "audio" / "gravacoes"
+        # Caminho correto: <projeto>/gravacoes/audio
+        base_dir = (
+            Path(__file__).resolve().parents[2]
+            / "gravacoes"
+            / "audio"
+        )
+        base_dir.mkdir(parents=True, exist_ok=True)
+
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-
         self.audio_filename = base_dir / f"audio_{timestamp}_parte{self.segment_index}.wav"
 
-        """ soundfile abre o arquivo WAV em modo de escrita.
-            - samplerate define a taxa de amostragem
-            - channels define quantos canais (mono ou stereo)
-            - subtype="PCM_16" garante compatibilidade máxima
-        """
         self.file = sf.SoundFile(
             self.audio_filename,
             mode='w',
@@ -89,8 +85,7 @@ class AudioRecorder:
         )
 
         self.segment_start_time = datetime.now()
-        print(f"[AUDIO - SEGMENTO] Gravando arquivo:", self.audio_filename)
-
+        print(f"[AUDIO - SEGMENTO] Gravando arquivo: {self.audio_filename}")
         self.segment_index += 1
 
     def start_recording(self):
@@ -100,9 +95,7 @@ class AudioRecorder:
 
         self.start_new_segment()
 
-        """ sounddevice.InputStream abre o microfone e chama o callback
-            automaticamente sempre que há dados.
-        """
+        # sounddevice.InputStream abre o microfone e chama o callback automaticamente sempre que há dados.
         self.stream = sd.InputStream(
             samplerate=self.samplerate,
             channels=self.channels,
@@ -110,6 +103,7 @@ class AudioRecorder:
         )
 
         self.stream.start()
+        self.running = True
         print("Captura de áudio iniciada.")
 
         return True
@@ -125,10 +119,13 @@ class AudioRecorder:
         print("Gravando áudio... pressione CTRL+C para parar.")
 
         try:
-            while True:
-
+            while self.running:
                 # Pega próximo bloco de áudio enviado pelo callback
                 block = self.audio_queue.get()
+
+                # Sentinela para encerrar o loop
+                if block is None:
+                    break
 
                 # Tempo decorrido do segmento atual
                 elapsed = (datetime.now() - self.segment_start_time).total_seconds()
@@ -152,11 +149,14 @@ class AudioRecorder:
         """
         Libera recursos: fecha stream, arquivo e esvazia filas.
         """
+        self.running = False
 
-        """ Assim como no vídeo:
-            - stream.stop() e stream.close() desligam o microfone
-            - file.close() salva e fecha o WAV
-        """
+        # Envia sentinela para liberar o get() caso o loop esteja bloqueado
+        self.audio_queue.put(None)
+
+        # Assim como no vídeo:
+        # - stream.stop() e stream.close() desligam o microfone
+        # - file.close() salva e fecha o WAV
         if self.stream:
             self.stream.stop()
             self.stream.close()
