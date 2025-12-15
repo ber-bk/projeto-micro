@@ -9,7 +9,7 @@ Sistema integrado para monitoramento de missões de mergulho que combina sensore
 - Gravação automática de vídeo e áudio em segmentos de 5 minutos
 - Cadastro e gerenciamento de mergulhadores
 - Armazenamento em banco de dados SQLite
-- Interface gráfica intuitiva (Tkinter)
+- Interface gráfica (Tkinter)
 - Reprodução sincronizada de missões gravadas
 - Estatísticas de medições (mín/máx/média)
 
