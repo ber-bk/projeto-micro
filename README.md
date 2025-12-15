@@ -134,5 +134,5 @@ projeto-micro-main/
 ##  Demonstração em vídeo
 
 [![Demonstração do projeto](https://img.youtube.com/vi/X3-hCFhAKb0/0.jpg)](https://www.youtube.com/watch?v=X3-hCFhAKb0)
-
+Clique na imagem para assistir ao vídeo no YouTube.
 
