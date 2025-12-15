@@ -129,3 +129,10 @@ projeto-micro-main/
 - **DS18B20** - Sensor de temperatura
 - **Sensor analógico** - Medição de pressão
 - **OneWire / DallasTemperature** - Bibliotecas Arduino
+
+
+##  Demonstração em vídeo
+
+[![Demonstração do projeto](https://img.youtube.com/vi/X3-hCFhAKb0/0.jpg)](https://www.youtube.com/watch?v=X3-hCFhAKb0)
+
+
