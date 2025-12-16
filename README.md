@@ -93,12 +93,12 @@ projeto-micro-main/
 ├── README.md                      # Este arquivo
 │
 ├── sensor_e_temperatura/          # Código Arduino
-│   └── sensor_e_temperatura.ino   # Leitura de sensores (temp + pressão)
+│   └── sensor_e_temperatura.ino   # Leitura de sensores (temperatura + pressão)
 │
 ├── servidor/                      # Backend
 │   ├── database.py                # Gerenciamento do banco SQLite
 │   ├── sensor_arduino.py          # Comunicação serial com Arduino
-│   └── mergulho.db                # Banco de dados (gerado automaticamente)
+│   └── mergulho.db                # Banco de dados
 │
 ├── interface/                     # Interface gráfica (Tkinter)
 │   ├── criar_missao.py            # Tela de criação de missões
