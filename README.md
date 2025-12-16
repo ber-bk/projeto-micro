@@ -91,7 +91,6 @@ O sistema é dividido em 4 camadas principais:
 projeto-micro-main/
 ├── main.py                        # Arquivo principal - inicializa o sistema
 ├── README.md                      # Este arquivo
-├── .gitignore                     # Arquivos ignorados pelo git
 │
 ├── sensor_e_temperatura/          # Código Arduino
 │   └── sensor_e_temperatura.ino   # Leitura de sensores (temp + pressão)
