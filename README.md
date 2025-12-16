@@ -95,7 +95,7 @@ projeto-micro-main/
 ├── sensor_e_temperatura/          # Código Arduino
 │   └── sensor_e_temperatura.ino   # Leitura de sensores (temp + pressão)
 │
-├── servidor/                      # Backend e lógica de negócio
+├── servidor/                      # Backend
 │   ├── database.py                # Gerenciamento do banco SQLite
 │   ├── sensor_arduino.py          # Comunicação serial com Arduino
 │   └── mergulho.db                # Banco de dados (gerado automaticamente)
